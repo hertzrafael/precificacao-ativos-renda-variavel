@@ -26,7 +26,7 @@ Desenvolver um processo de tratamento e análise estatística de dados para prec
 2. Realizar a limpeza e o tratamento dos dados, corrigindo valores ausentes, removendo duplicatas e identificando outliers.
 3. Aplicar métodos de estatística descritiva (média, mediana, desvio padrão) para analisar o comportamento dos ativos.
 4. Identificar correlações entre diferentes ativos e visualizar tendências através de gráficos e tabelas.
-5. Produzir um relatório com as conclusões obtidas a partir da análise estatística, sem o uso de machine learning, apenas com estatísticas simples.
+5. Produzir um relatório com as conclusões obtidas a partir da análise estatística.
 
 ---
 
