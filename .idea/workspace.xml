@@ -36,7 +36,7 @@
     "Python.asset.executor": "Run",
     "Python.main.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "main",
+    "git-widget-placeholder": "Merging main",
     "ignore.virus.scanning.warn.message": "true",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
@@ -67,7 +67,7 @@
       <workItem from="1726583837125" duration="93000" />
       <workItem from="1726586201830" duration="1260000" />
       <workItem from="1726587500527" duration="353000" />
-      <workItem from="1726596915312" duration="6030000" />
+      <workItem from="1726596915312" duration="6687000" />
     </task>
     <servers />
   </component>
