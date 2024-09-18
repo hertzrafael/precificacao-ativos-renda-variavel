@@ -1,12 +1,12 @@
 import yfinance as yf
-from pandas import DataFrame
+from pandas import DataFrame, to_datetime
 
 class Asset:
 
     def __init__(self, name: str, period: str = '1mo'):
         self.asset = yf.Ticker(name)
         self.history = self.asset.history(period).reset_index()
-        self.history.columns = self.history.columns.str.lower()
+        self._transform_history()
 
     def get_history(self):
         return self.history
@@ -26,3 +26,7 @@ class Asset:
     def _round_columns(self, data_frame: DataFrame, columns: list[str], decimal_places: int = 2):
         for column in columns:
             data_frame[column] = data_frame[column].map(lambda x: round(x, decimal_places))
+
+    def _transform_history(self):
+        self.history.columns = self.history.columns.str.lower()
+        self.history['date'] = to_datetime(self.history['date'].dt.strftime('%Y-%m-%d'))
