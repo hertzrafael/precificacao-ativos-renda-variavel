@@ -34,6 +34,35 @@ class Asset:
                 .assign(mean=lambda x: round(x['close'].mean(), 2))
                 .assign(above_average=lambda x: x['close'] >= x['mean'])
         )
+    
+    def get_standart_deviation(self):
+        data = (self.get_history()
+                .filter(items=['date','close'])
+                .assign(standart_deviante=lambda x: x['close'].std())
+        )
+
+        return data
+
+    def _classify_situation(self, close, superior, inferior):
+        if close > superior:
+            return 'Overbought'
+        elif close < inferior:
+            return 'Oversold'
+        else:
+            return 'Normal'
+
+    def get_outlier_bollinger_band_check(self):
+        data = self.get_trend_price()
+        bollinger_superior = data['close'].mean() + (2 * data['close'].std())
+        bollinger_inferior = data['close'].mean() - (2 * data['close'].std())
+
+        print(bollinger_superior)
+        print(bollinger_inferior)
+
+        data['situation'] = data.apply(lambda row: self._classify_situation(row['close'], bollinger_superior, bollinger_inferior), axis=1)
+
+        return data
+
 
     def _transform_history(self, history):
         history.columns = history.columns.str.lower()
@@ -42,3 +71,5 @@ class Asset:
     def _add_percentage(self, data_frame: DataFrame, columns: list[str]):
         for column in columns:
             data_frame[column] = data_frame[column].astype(str) + '%'
+
+
