@@ -45,9 +45,9 @@ class Asset:
 
     def _classify_situation(self, close, superior, inferior):
         if close > superior:
-            return 'Overbought'
+            return 'Overvalued'
         elif close < inferior:
-            return 'Oversold'
+            return 'Undervalued'
         else:
             return 'Normal'
 
