@@ -64,7 +64,7 @@ class Asset:
             return 'Normal'
 
     def get_outlier_bollinger_band_check(self):
-        data = self.get_trend_price()
+        data = self.get_history().filter(items=['date', 'open', 'close', 'volume'])
         bollinger_superior = data['close'].mean() + (2 * data['close'].std())
         bollinger_inferior = data['close'].mean() - (2 * data['close'].std())
 

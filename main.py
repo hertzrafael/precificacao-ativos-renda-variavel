@@ -18,5 +18,9 @@ def run():
             print(asset.get_trend_price())
             continue
 
+        if action == '3':
+            print(asset.get_outlier_bollinger_band_check())
+            continue
+
 if __name__ == "__main__":
     run()
