@@ -48,7 +48,7 @@ class Asset:
                 .assign(mean=lambda x: round(x['close'].mean(), 2))
                 .assign(above_average=lambda x: x['close'] >= x['mean'])
         )
-    
+
     def get_standart_deviation(self):
         return (self.get_history()
                 .filter(items=['date','close'])
@@ -64,13 +64,28 @@ class Asset:
             return 'Normal'
 
     def get_outlier_bollinger_band_check(self):
-        data = self.get_trend_price()
+        data = self.get_history().filter(items=['date', 'open', 'close', 'volume'])
         bollinger_superior = data['close'].mean() + (2 * data['close'].std())
         bollinger_inferior = data['close'].mean() - (2 * data['close'].std())
 
         data['situation'] = data.apply(lambda row: self._classify_situation(row['close'], bollinger_superior, bollinger_inferior), axis=1)
 
         return data
+    
+    def get_sharpe_ratio(self):
+        df = (self.get_history()
+              .filter(items=['date', 'close'])
+              .assign(daily_return=lambda x: round(x['close'].pct_change(), 6))
+        )
+
+        monthly_return = DataFrame(df.groupby(df['date'].dt.month)['daily_return'].sum()).reset_index()
+        std = monthly_return['daily_return'].std()
+
+        monthly_return['accumulated_return'] = (1 + monthly_return['daily_return']).cumprod() - 1
+        accumulated_return = (monthly_return.tail(1)['accumulated_return']).item()
+        sharpe_ratio = (accumulated_return - 0.1375) / std
+
+        return round(sharpe_ratio, 2)
 
     def _transform_history(self, history):
         history.columns = history.columns.str.lower()
