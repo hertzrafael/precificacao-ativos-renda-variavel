@@ -1,7 +1,7 @@
 from asset import Asset
 
 def run():
-    name = 'ITUB4.SA' #input("Nome da ação: ")
+    name = 'ABEV3.SA' #input("Nome da ação: ")
     asset = Asset(name, days_before=365)
 
     while True:
@@ -36,6 +36,14 @@ def run():
 
         if action == '6':
             print(asset.get_sharpe_ratio())
+            continue
+
+        if action == '7':
+            data_best, data_worst = asset.ranking()
+
+            print(data_best)
+
+            print(data_worst)
             continue
 
 if __name__ == "__main__":
