@@ -5,11 +5,10 @@ from pandas import DataFrame, to_datetime
 
 class Asset:
 
-    def __init__(self, name: str, cache_history: bool = True, days_before: int = 30, free_asset: float = 13.75):
+    def __init__(self, name: str, cache_history: bool = True, days_before: int = 30):
         self.asset = Ticker(name)
         self.cache_history = cache_history
         self.days_before = days_before
-        self.free_asset = free_asset
         self.history = None
 
     def get_history(self):
@@ -49,7 +48,7 @@ class Asset:
                 .assign(mean=lambda x: round(x['close'].mean(), 2))
                 .assign(above_average=lambda x: x['close'] >= x['mean'])
         )
-    
+
     def get_standart_deviation(self):
         return (self.get_history()
                 .filter(items=['date','close'])
@@ -73,24 +72,20 @@ class Asset:
 
         return data
     
-    def get_free_return(self):
-        return_free = (self.free_asset / 100) / 252
-
-        return return_free
-
     def get_sharpe_ratio(self):
-        data = self.get_history().filter(items=['date', 'open', 'close'])
-        moving_mean = data['close'].mean()
-        free_return = self.get_free_return()
-        standart_deviantion = data['close'].std()
+        df = (self.get_history()
+              .filter(items=['date', 'close'])
+              .assign(daily_return=lambda x: round(x['close'].pct_change(), 6))
+        )
 
-        print(moving_mean)
-        print(free_return)
-        print(standart_deviantion)
+        monthly_return = DataFrame(df.groupby(df['date'].dt.month)['daily_return'].sum()).reset_index()
+        std = monthly_return['daily_return'].std()
 
-        sharpe_ratio = (moving_mean - free_return) / standart_deviantion
+        monthly_return['accumulated_return'] = (1 + monthly_return['daily_return']).cumprod() - 1
+        accumulated_return = (monthly_return.tail(1)['accumulated_return']).item()
+        sharpe_ratio = (accumulated_return - 0.1375) / std
 
-        return sharpe_ratio
+        return round(sharpe_ratio, 2)
 
     def _transform_history(self, history):
         history.columns = history.columns.str.lower()
