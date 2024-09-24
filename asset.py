@@ -5,10 +5,11 @@ from pandas import DataFrame, to_datetime
 
 class Asset:
 
-    def __init__(self, name: str, cache_history: bool = True, days_before: int = 30):
+    def __init__(self, name: str, cache_history: bool = True, days_before: int = 30, free_asset: float = 13.75):
         self.asset = Ticker(name)
         self.cache_history = cache_history
         self.days_before = days_before
+        self.free_asset = free_asset
         self.history = None
 
     def get_history(self):
@@ -71,6 +72,25 @@ class Asset:
         data['situation'] = data.apply(lambda row: self._classify_situation(row['close'], bollinger_superior, bollinger_inferior), axis=1)
 
         return data
+    
+    def get_free_return(self):
+        return_free = (self.free_asset / 100) / 252
+
+        return return_free
+
+    def get_sharpe_ratio(self):
+        data = self.get_history().filter(items=['date', 'open', 'close'])
+        moving_mean = data['close'].mean()
+        free_return = self.get_free_return()
+        standart_deviantion = data['close'].std()
+
+        print(moving_mean)
+        print(free_return)
+        print(standart_deviantion)
+
+        sharpe_ratio = (moving_mean - free_return) / standart_deviantion
+
+        return sharpe_ratio
 
     def _transform_history(self, history):
         history.columns = history.columns.str.lower()
