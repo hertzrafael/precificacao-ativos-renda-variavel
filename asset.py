@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 
 from yfinance import Ticker
 from pandas import DataFrame, to_datetime
+from numpy import datetime64
 
 class Asset:
 
@@ -73,6 +74,11 @@ class Asset:
         return data
     
     def get_sharpe_ratio(self):
+
+        if self.days_before % 365 != 0 and self.days_before % 366 != 0:
+            print(f'Você só pode obter o índice sharpe atualmente em períodos anuais.')
+            return
+
         df = (self.get_history()
               .filter(items=['date', 'close'])
               .assign(daily_return=lambda x: round(x['close'].pct_change(), 6))
@@ -89,6 +95,11 @@ class Asset:
 
     def _transform_history(self, history):
         history.columns = history.columns.str.lower()
+
+        date_object = history['date'].dtype != datetime64
+        if date_object:
+            history['date'] = to_datetime(history['date'])
+
         history['date'] = to_datetime(history['date'].dt.strftime('%Y-%m-%d'))
 
     def _add_percentage(self, data_frame: DataFrame, columns: list[str]):

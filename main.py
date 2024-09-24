@@ -1,7 +1,7 @@
 from asset import Asset
 
 def run():
-    name = 'AAPL' #input("Nome da ação: ")
+    name = 'ITUB4.SA' #input("Nome da ação: ")
     asset = Asset(name, days_before=365)
 
     while True:
@@ -11,22 +11,30 @@ def run():
             break
 
         if action == '0':
-            print(asset.get_history().info())
+            print(asset.asset.history(period='1m', rounding=True).info())
             continue
 
         if action == '1':
-            print(asset.get_sharpe_ratio())
+            print(asset.get_history())
             continue
 
         if action == '2':
-            print(asset.get_trend_price())
+            print(asset.get_moving_mean())
             continue
 
         if action == '3':
-            print(asset.get_outlier_bollinger_band_check())
+            print(asset.get_sharpe_ratio())
             continue
 
         if action == '4':
+            print(asset.get_trend_price())
+            continue
+
+        if action == '5':
+            print(asset.get_outlier_bollinger_band_check())
+            continue
+
+        if action == '6':
             print(asset.get_sharpe_ratio())
             continue
 
