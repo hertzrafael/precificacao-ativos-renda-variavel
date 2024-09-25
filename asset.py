@@ -105,3 +105,11 @@ class Asset:
     def _add_percentage(self, data_frame: DataFrame, columns: list[str]):
         for column in columns:
             data_frame[column] = data_frame[column].astype(str) + '%'
+
+    def ranking(self):
+        data = self.get_outlier_bollinger_band_check()
+        data_5_best = data.sort_values(by='close', ascending=False).head(5)
+
+        data_5_worst = data.sort_values(by='close', ascending=False).tail(5)
+
+        return data_5_best, data_5_worst
