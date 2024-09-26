@@ -34,15 +34,15 @@ class Asset:
         self.history = None
         self.get_history()
 
-    def get_trend_price(self):
+    def get_accumulated_return(self):
         data = (self.get_history()
-                .filter(items=['date', 'open', 'close'])
-                .assign(diff_percentage=lambda x: round((100 - (x['close'] * 100) / x['open']), 2) * -1)
+                .filter(items=['date', 'close'])
+                .assign(daily_return=lambda x: round(x['close'].pct_change(), 6))
         )
-        diff_sum = round(data['diff_percentage'].sum(), 2)
-        self._add_percentage(data, columns=['diff_percentage', 'diff_sum'])
+        data['accumulated_return'] = (1 + data['daily_return']).cumprod() - 1
+        accumulated_return = round((data.tail(1)['accumulated_return']).item() * 100, 2)
 
-        return diff_sum, data
+        return accumulated_return, data
 
     def get_moving_mean(self):
         return (self.get_history()

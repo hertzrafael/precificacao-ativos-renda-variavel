@@ -27,7 +27,7 @@ def run():
             continue
 
         if action == '4':
-            print(asset.get_trend_price())
+            print(asset.get_accumulated_return())
             continue
 
         if action == '5':
