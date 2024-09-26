@@ -12,12 +12,13 @@ class Asset:
         self.days_before = days_before
         self.history = None
 
-    def get_history(self):
-        if self.cache_history:
+    def get_history(self, days=-1):
+        if days == -1 and self.cache_history:
             if self.history is not None:
                 return self.history
 
-        start_date = datetime.now() - timedelta(days=self.days_before)
+        days = self.days_before if days == -1 else days
+        start_date = datetime.now() - timedelta(days=days)
         history = self.asset.history(start=start_date, rounding=True).reset_index()
         self._transform_history(history)
 
@@ -37,11 +38,11 @@ class Asset:
         data = (self.get_history()
                 .filter(items=['date', 'open', 'close'])
                 .assign(diff_percentage=lambda x: round((100 - (x['close'] * 100) / x['open']), 2) * -1)
-                .assign(diff_sum=lambda x: round(x['diff_percentage'].sum(), 2))
         )
+        diff_sum = round(data['diff_percentage'].sum(), 2)
         self._add_percentage(data, columns=['diff_percentage', 'diff_sum'])
 
-        return data
+        return diff_sum, data
 
     def get_moving_mean(self):
         return (self.get_history()
@@ -72,14 +73,10 @@ class Asset:
         data['situation'] = data.apply(lambda row: self._classify_situation(row['close'], bollinger_superior, bollinger_inferior), axis=1)
 
         return data
-    
+
     def get_sharpe_ratio(self):
 
-        if self.days_before % 365 != 0 and self.days_before % 366 != 0:
-            print(f'Você só pode obter o índice sharpe atualmente em períodos anuais.')
-            return
-
-        df = (self.get_history()
+        df = (self.get_history(days=365)
               .filter(items=['date', 'close'])
               .assign(daily_return=lambda x: round(x['close'].pct_change(), 6))
         )
