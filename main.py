@@ -35,12 +35,7 @@ def run():
             continue
 
         if action == '4':
-            diff ,data = asset.get_accumulated_return()
-            
-            #data.index = range(1 , len(data) + 1)
-            print(diff)
-            print(data)
-            #data.to_csv('AAPL.csv', index=True)
+            print(asset.get_accumulated_return())
             continue
 
         if action == '5':
