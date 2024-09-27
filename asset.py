@@ -54,7 +54,7 @@ class Asset:
     def get_standart_deviation(self):
         return (self.get_history()
                 .filter(items=['date','close'])
-                .assign(standart_deviante=lambda x: x['close'].std())
+                .assign(standart_deviant=lambda x: x['close'].std())
         )
 
     def _classify_situation(self, close, superior, inferior):
@@ -86,7 +86,10 @@ class Asset:
 
         monthly_return['accumulated_return'] = (1 + monthly_return['daily_return']).cumprod() - 1
         accumulated_return = (monthly_return.tail(1)['accumulated_return']).item()
-        sharpe_ratio = (accumulated_return - 0.1375) / std
+
+        risk_free_rate = 0.1375 
+
+        sharpe_ratio = (accumulated_return - risk_free_rate) / std
 
         return round(sharpe_ratio, 2)
 
@@ -109,4 +112,4 @@ class Asset:
 
         data_5_worst = data.sort_values(by='close', ascending=False).tail(5)
 
-        return data_5_best, data_5_worst
+        return data_5_best, data_5_worst, data
