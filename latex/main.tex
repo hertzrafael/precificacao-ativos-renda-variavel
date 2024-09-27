@@ -1,0 +1,215 @@
+\documentclass[aspectratio=169]{beamer}
+\usepackage[portuguese]{babel}
+\usepackage{xcolor} % Para colorir o código
+\usepackage{booktabs} % Para a formatação da tabela
+\usepackage{array}    % Para a personalização de colunas
+\usepackage{pgfplots} % Pacote para gráficos
+\usepackage{amsmath}
+
+\usetheme{DarkConsole}
+
+\title{Precificação de ativos de renda variável}
+\subtitle{Uma Abordagem Baseada em Dados Históricos}
+\author{\\Cauã Wendel Sousa da Silva \\ Hertz Rafael Queiroz da Cruz}
+
+\begin{document}
+
+% Slide de título
+\begin{frame}
+  \maketitle
+\end{frame}
+
+
+% Sumário
+\begin{frame}{Sumário}
+  \tableofcontents
+\end{frame}
+
+% Introdução
+\section{Introdução}
+\begin{frame}{Introdução}
+
+  \begin{center}
+    {\Large Como identificar quais os melhores ativos a serem investidos através de dados estatísticos?}
+
+    
+  \end{center}
+
+  \vspace{0.5cm}
+Neste trabalho, buscamos responder a essa questão utilizando métodos estatísticos que permitem analisar tendências e históricos de ações, a fim de auxiliar o investidor na tomada de decisões.
+
+
+  
+\end{frame}
+
+% Objetivos
+\section{Objetivos}
+\begin{frame}{Objetivos}
+  \textbf{Geral:}  
+  Obter insights que possam ajudar o investidor a identificar em qual ativo pode ser mais rentável investir, com base em dados históricos e estatísticas.
+
+  \vspace{0.5cm}
+  \textbf{Específicos:}
+  \begin{itemize}
+    \item Utilizar o Índice de Sharpe para comparar o retorno ajustado ao risco entre diferentes investimentos.
+    \item Calcular a Média Móvel para identificar tendências de preço ao longo do tempo.
+    \item Aplicar as Bandas de Bollinger para detectar condições de valorização ou desvalorização nos ativos.
+  \end{itemize}
+\end{frame}
+
+% Revisão da Literatura
+\section{Revisão da Literatura}
+\begin{frame}{Revisão da Literatura}
+  \begin{itemize}
+    \item Índice de Sharpe: Avalia a relação entre risco e retorno, levando em consideração uma taxa livre de risco. Esse índice fornece ao investidor a informação necessária para determinar se os riscos de possíveis perdas são compensados pelo retorno esperado. \cite{de2015fundos}
+
+    \item Bandas de Bollinger: Serve para identificar quando o investidor deve comprar ou vender suas ações a fim de maximizar seus lucros, comprando enquanto está desvalorizado e vendendo supervalorizado. \cite{yan2023enhanced}
+
+    \item Desvio Padrão: Caracteriza a distância típica de uma observação do centro da distribuição; em outras palavras, reflete a dispersão das observações individuais da amostra em torno da média da amostra. \cite{curran1998fundamental}
+
+    \item Média Móvel: Resume os padrões gerais de mudança ao longo de um período passado e é frequentemente utilizada para prever a tendência futura de séries temporais. \cite{su2022self}
+
+  \end{itemize}
+\end{frame}
+
+% Metodologia
+\section{Metodologia}
+\begin{frame}{Metodologia}
+  \textbf{Ferramentas e Procedimentos Utilizados:}
+  \begin{itemize}
+    \item Coleta de dados financeiros via biblioteca do \texttt{yfinance}.
+    \item Transformação e limpeza dos dados do DataFrame utilizando \texttt{pandas}, incluindo padronização das colunas.
+    \item Consideração do retorno sobre o risco através do Índice de Sharpe.
+    \item Utilização da Média Móvel para identificar a tendência do valor de um ativo.
+    \item Aplicação das bandas de Bollinger para avaliação de valorização ou desvalorização dos ativos.
+  \end{itemize}
+\end{frame}
+
+% Resultado
+\section{Resultado}
+
+\begin{frame}{Resultados}
+
+\begin{center}
+\[
+\text{Índice de Sharpe} = \frac{\text{Retorno Acumulado} - \text{Taxa Livre de Risco}}{\text{Desvio Padrão}}
+\]
+\end{center}
+
+\vspace{0.5em}
+
+\begin{center}
+Taxa livre de risco: SELIC (13,75\%)
+\end{center}
+
+
+\begin{table}[h]
+    \centering
+    \large
+    \begin{tabular}{|c|c|} % Define duas colunas com bordas verticais
+        \hline % Linha horizontal
+        Ativo  & IS \\ % Cabeçalho da tabela
+        \hline % Linha horizontal
+        Nvidia (NVDA)   & 16,58   \\ % Linha 1
+        \hline % Linha horizontal
+        Apple (AAPL)   & 3,58   \\ % Linha 2
+        \hline % Linha horizontal
+        Banco do Brasil (BBAS3)  & 3,31   \\ % Linha 3
+        \hline % Linha horizontal
+        Petrobrás (PETR4)  & 1,69   \\ % Linha 4
+        \hline % Linha horizontal
+        Tesla (TSLA)   & -0,5  \\ % Linha 5
+        \hline % Linha horizontal
+    \end{tabular}
+    \caption{Ranking Índice de Sharpe (27/09/2023 - 26/09/2024)}
+    \label{tab:ranking_sharpe}
+\end{table}
+\end{frame}
+
+\begin{frame}{Identificando Tendências de Preço}
+\begin{center}
+    Analisando ações da Nvidia    
+\end{center}
+
+\begin{center}
+    Período: 28/08/2024 - 26/09/2024 \\
+    Valor Médio: 115
+\end{center}
+    
+\begin{figure}
+    \centering
+    \begin{tikzpicture}
+        \begin{axis}[
+            title={Gráfico do Valor de Fechamento do Ativo},
+            xlabel={Dias},
+            ylabel={Valor},
+            width=15cm,
+            height=5cm,
+            grid=major,
+            minor tick num=1,
+            xtick={1, ..., 21},
+            xmin=1,
+            xmax=21,
+            smooth,
+            extra y ticks={115},
+            extra y tick style={tick label style={color=yellow}} % Suaviza a linha % Estilo do tick amarelo
+        ]
+            \addplot[color=cyan, line width=2pt, mark=none] table [col sep=comma, x=index, y=close]{NVDA.csv};
+
+            \addplot[color=yellow, line width=2pt, dashed] 
+                coordinates {(1,115) (21,115)};
+        \end{axis}
+    \end{tikzpicture}
+\end{figure}
+\end{frame}
+
+\begin{frame}{Bandas de Bollinger}
+
+\[
+\text{Bandas de Bollinger} = \text{Média Móvel} \pm k \cdot \text{Desvio Padrão}
+\]
+
+\begin{center}
+    Analisando ações da Tesla  
+\end{center}
+
+\begin{center}
+    Período: 28/09/2021 - 26/09/2024 \\
+\end{center}
+    
+\begin{table}[h]
+    \centering
+    \large
+    \begin{tabular}{|c|c|c|} % Define duas colunas com bordas verticais
+        \hline % Linha horizontal
+        Data / Período  & Valor & Status \\ % Cabeçalho da tabela
+        \hline % Linha horizontal
+        04/11/2021  & 409.97 & Super Valorizado   \\ % Linha 1
+        \hline % Linha horizontal
+        28/09/2021 - 26/09/2024 & 238.26  & Valor médio  \\ % Linha 2
+        \hline % Linha horizontal
+        03/01/2023  & 108.10 & Desvalorizado   \\ % Linha 3
+        \hline % Linha horizontal
+    \end{tabular}
+    \caption{Valores das ações da Tesla com base nas Bandas de Bollinger.}
+    \title{Bordas de Bollinger}
+    \label{tab:bollinger_table}
+\end{table}
+
+\begin{center}
+    
+ O desvio padrão é de 59.72, média movel é de 238.26 e usando k = 2. Qualquer valor acima de 357,7 é considerado super valorizado e abaixo de 118,82 é considerado desvalorizado.
+
+\end{center}
+
+\end{frame}
+    
+% Conclusão
+\section{Conclusão}
+\begin{frame}{Contribuição do Trabalho}
+  Este trabalho apresenta uma abordagem estatística que permite ao investidor extrair insights valiosos com base em dados históricos e tendências. Utilizando métodos como o Índice de Sharpe, a Média Móvel e as Bandas de Bollinger é possível que o usuário tome decisões mais informadas e aumente suas chances de identificar ativos com maior potencial de rentabilidade.
+\end{frame}
+
+\bibliographystyle{plain}
+\bibliography{ref}
+\end{document}

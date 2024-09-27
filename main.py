@@ -1,8 +1,8 @@
 from asset import Asset
 
 def run():
-    name = 'ABEV3.SA' #input("Nome da ação: ")
-    asset = Asset(name, days_before=365)
+    name = 'TSLA' #input("Nome da ação: ")
+    asset = Asset(name, days_before=1095)
 
     while True:
         action = input("Ação: ")
@@ -23,11 +23,24 @@ def run():
             continue
 
         if action == '3':
-            print(asset.get_sharpe_ratio())
+            data = asset.get_history().filter(items=['date','close'])
+
+            moving_mean = data['close'].mean()
+
+            print(moving_mean)
+
+            data.index = range(1 , len(data) + 1)
+
+            data.to_csv('NVDA.csv', index=True)
             continue
 
         if action == '4':
-            print(asset.get_trend_price())
+            diff ,data = asset.get_accumulated_return()
+            
+            #data.index = range(1 , len(data) + 1)
+            print(diff)
+            print(data)
+            #data.to_csv('AAPL.csv', index=True)
             continue
 
         if action == '5':
@@ -39,11 +52,17 @@ def run():
             continue
 
         if action == '7':
-            data_best, data_worst = asset.ranking()
+            data_best, data_worst, data = asset.ranking()
 
-            print(data_best)
+            print(data_best.to_latex())
 
-            print(data_worst)
+            print(data_worst.to_latex())
+
+            print("Valor médio: ",data['close'].mean())
+
+            print("Desvio padrão: ",data['close'].std())
+
+            print(data)
             continue
 
 if __name__ == "__main__":
