@@ -76,11 +76,7 @@ class Asset:
     
     def get_sharpe_ratio(self):
 
-        if self.days_before % 365 != 0 and self.days_before % 366 != 0:
-            print(f'Você só pode obter o índice Sharpe atualmente em períodos anuais.')
-            return
-
-        df = (self.get_history()
+        df = (self.get_history(days=365)
               .filter(items=['date', 'close'])
               .assign(daily_return=lambda x: round(x['close'].pct_change(), 6))
         )
