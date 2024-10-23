@@ -2,7 +2,6 @@ from asset import Asset
 
 import streamlit as st
 import plotly.express as px
-import plotly.graph_objects as go
 
 def history(asset):
     df = asset.get_history().sort_values(by='date', ascending=True)
@@ -51,6 +50,19 @@ def history(asset):
     )
     st.plotly_chart(fig, use_container_width=True)
 
+def sharpe_index(asset):
+    sharpe_history = asset.get_history(days=365)
+    sharpe = asset.get_sharpe_ratio()
+
+    initial_date = sharpe_history.head(1)['date'].values[0]
+    final_date = sharpe_history.tail(1)['date'].values[0]
+
+    # Mostrar o retorno mensal também.
+
+    st.header(f'Período utilizado: {initial_date} - {final_date}')
+    st.metric('Taxa Livre de Risco: SELIC (%)', value=13.75)
+
+    st.metric('Indíce de Sharpe', value=sharpe)
 
 def run():
     st.set_page_config('Precificação de ativos de renda variável', ':money_with_wings:')
@@ -58,7 +70,7 @@ def run():
     pages = {
         'Histórico': history,
         'Retorno Acumulado': None,
-        'Índice de Sharpe': None,
+        'Índice de Sharpe': sharpe_index,
         'Bollinger': None
     }
 

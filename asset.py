@@ -88,7 +88,6 @@ class Asset:
         accumulated_return = (monthly_return.tail(1)['accumulated_return']).item()
 
         risk_free_rate = 0.1375 
-
         sharpe_ratio = (accumulated_return - risk_free_rate) / std
 
         return round(sharpe_ratio, 2)
