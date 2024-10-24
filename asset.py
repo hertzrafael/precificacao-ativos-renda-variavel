@@ -72,7 +72,7 @@ class Asset:
 
         data['situation'] = data.apply(lambda row: self._classify_situation(row['close'], bollinger_superior, bollinger_inferior), axis=1)
 
-        return data
+        return data, bollinger_superior, bollinger_inferior
 
     def get_sharpe_ratio(self):
 

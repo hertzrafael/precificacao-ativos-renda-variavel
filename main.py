@@ -64,6 +64,84 @@ def sharpe_index(asset):
 
     st.metric('Indíce de Sharpe', value=sharpe)
 
+def bollinger(asset):
+
+    df, bollinger_superior, bollinger_inferior = asset.get_outlier_bollinger_band_check()
+
+    df = df.sort_values(by='date', ascending=True)
+
+    df['color'] = df['situation'].apply(lambda x: 'green' if x == 'Overvalued' else ('red' if x == 'Undervalued' else 'lightblue'))
+
+    media = df['close'].mean()
+
+
+    first_col, second_col, third_col, quarter_col = st.columns(4)
+
+    with first_col:
+        st.metric('Maior Valor', value=df['close'].max())
+
+    with second_col:
+        st.metric('Valor Médio', value=round(media, 2))
+
+    with third_col:
+        st.metric('Menor Valor', value= df['close'].min())
+
+    with quarter_col:
+        st.metric('Desvio Padrão ', value=round(df['close'].std(), 2))
+
+    fig = px.line(
+        df,
+        x='date',
+        y='close',
+        labels={
+            'date': 'Data',
+            'close': 'Valor de Fechamento'
+        }
+    )
+
+    for i in range(len(df) - 1):
+        fig.add_shape(
+            type="line",
+            x0=df['date'][i], x1=df['date'][i+1],
+            y0=df['close'][i], y1=df['close'][i+1],
+            line=dict(color=df['color'].iloc[i], width=2),
+        )
+
+    fig.add_shape(
+        type='line',
+        x0=df['date'].min(),
+        x1=df['date'].max(),
+        y0=media,
+        y1=media,
+        line=dict(color='yellow', dash='dash'),
+        name='Média do Período'
+    )
+
+    fig.add_shape(
+        type='line',
+        x0=df['date'].min(),
+        x1=df['date'].max(),
+        y0=bollinger_superior,
+        y1=bollinger_superior,
+        line=dict(color='green', dash='dash'),
+        name='Banda Superior'
+    )
+
+    fig.add_shape(
+        type='line',
+        x0=df['date'].min(),
+        x1=df['date'].max(),
+        y0=bollinger_inferior,
+        y1=bollinger_inferior,
+        line=dict(color='red', dash='dash'),
+        name='Banda Inferior'
+    )
+
+    st.plotly_chart(fig, use_container_width=True)
+
+    
+    
+
 def run():
     st.set_page_config('Precificação de ativos de renda variável', ':money_with_wings:')
 
@@ -71,7 +149,7 @@ def run():
         'Histórico': history,
         'Retorno Acumulado': None,
         'Índice de Sharpe': sharpe_index,
-        'Bollinger': None
+        'Bollinger': bollinger
     }
 
     with st.sidebar:
