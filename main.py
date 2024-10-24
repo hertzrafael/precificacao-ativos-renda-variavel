@@ -51,6 +51,23 @@ def history(asset):
     st.plotly_chart(fig, use_container_width=True)
 
 def sharpe_index(asset):
+
+    with st.expander("🛈 Mais informações sobre Índice de Sharpe", expanded=False):
+        st.markdown(r"""
+            O Índice de Sharpe é uma medida utilizada em finanças para avaliar o desempenho ajustado ao risco de um 
+            investimento ou de um portfólio. Ele foi criado por William F. Sharpe em 1966 e é amplamente utilizado 
+            para comparar diferentes ativos financeiros.
+            
+            **Fórmula:**
+            
+            $$\text{Índice de Sharpe} = \frac{R_p - R_f}{\sigma_p}$$
+            
+            Em que:
+            - $$R_p$$ = Retorno do ativo (ou portfólio)
+            - $$R_f$$ = Taxa de retorno livre de risco
+            - $$\sigma_p$$ = Desvio padrão do retorno do ativo (ou portfólio)
+        """)
+
     sharpe_history = asset.get_history(days=365)
     acc_return, risk_free, monthly_return, sharpe = asset.get_sharpe_ratio()
 
@@ -77,15 +94,10 @@ def sharpe_index(asset):
     st.dataframe(monthly_return.rename(columns={'date': 'month'}), hide_index=True, use_container_width=True)
 
 def bollinger(asset):
-
     df, bollinger_superior, bollinger_inferior = asset.get_outlier_bollinger_band_check()
-
     df = df.sort_values(by='date', ascending=True)
-
     df['color'] = df['situation'].apply(lambda x: 'green' if x == 'Overvalued' else ('red' if x == 'Undervalued' else 'yellow'))
-
     media = df['close'].mean()
-
 
     first_col, second_col, third_col, quarter_col = st.columns(4)
 
