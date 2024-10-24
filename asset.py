@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 
 from yfinance import Ticker
 from pandas import DataFrame, to_datetime
-from numpy import datetime64
+from numpy import datetime64, log1p
 
 class Asset:
 
@@ -37,10 +37,12 @@ class Asset:
     def get_accumulated_return(self):
         data = (self.get_history()
                 .filter(items=['date', 'close'])
-                .assign(daily_return=lambda x: round(x['close'].pct_change(), 6))
+                .assign(daily_return=lambda x: round(log1p(x['close'].pct_change()), 6))
         )
         data['accumulated_return'] = (1 + data['daily_return']).cumprod() - 1
         accumulated_return = round((data.tail(1)['accumulated_return']).item() * 100, 2)
+
+        data = data.dropna().reset_index()
 
         return accumulated_return, data
 

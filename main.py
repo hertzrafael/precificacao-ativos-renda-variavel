@@ -93,6 +93,81 @@ def sharpe_index(asset):
 
     st.dataframe(monthly_return.rename(columns={'date': 'month'}), hide_index=True, use_container_width=True)
 
+def accumulated_return(asset):
+    accumulated_r ,df = asset.get_accumulated_return()
+
+    first_col, second_col, third_col, quarter_col = st.columns(4)
+
+    df['accumulated_return'] = df['accumulated_return'].apply(lambda x: x * 100)
+
+    with first_col:
+        st.metric('Retorno total', value=f'{str(round(accumulated_r, 2))}%')
+
+    with second_col:
+        st.metric('Retorno Médio', value=f'{str(round(df['accumulated_return'].mean(), 2))}%')
+
+    with third_col:
+        st.metric('Menor Retorno', value=f'{str(round(df['accumulated_return'].min(), 2))}%' )
+
+    with quarter_col:
+        st.metric('Maior Retorno ', value=f'{str(round(df['accumulated_return'].max(), 2))}%')
+
+    with st.expander("🛈 Mais informações sobre Retorno Acumulado", expanded=False):
+        st.markdown(r"""
+        **O que é o Retorno Acumulado?**
+        
+        O retorno acumulado é uma medida que mostra o ganho ou perda total de um investimento ao longo do tempo, considerando os retornos diários de um ativo financeiro. Ele é calculado pela multiplicação dos retornos diários de cada período, resultando no retorno total acumulado desde o início até o momento atual.
+
+        A fórmula para o cálculo do retorno acumulado é:
+
+        $$R_t = \prod_{i=1}^{t} (1 + r_i) - 1$$
+        
+        onde:
+        - $$R_t$$ é o retorno acumulado no tempo $$t$$,
+        - $$r_i$$ é o retorno diário no dia $$i$$.
+
+        **Cálculo do Retorno Diário:**
+        
+        O retorno diário é a variação percentual entre o preço de fechamento de um dia e o preço de fechamento do dia anterior. A fórmula para o cálculo do retorno diário é:
+
+        $$r_i = \frac{P_{i} - P_{i-1}}{P_{i-1}}$$
+
+        ou em termos logarítmicos:
+
+        $$r_i = \ln\left(\frac{P_i}{P_{i-1}}\right)$$
+        
+        onde:
+        - $$P_i$$ é o preço de fechamento do ativo no dia $$i$$,
+        - $$P_{i-1}$$ é o preço de fechamento no dia anterior.
+
+        **Interpretação:**
+        
+        O retorno acumulado permite ao investidor visualizar o desempenho total de um ativo ao longo do tempo. Ele considera a composição dos retornos diários, o que significa que o retorno de um dia é aplicado sobre o valor atualizado pelo retorno do dia anterior, resultando em um crescimento exponencial ao longo do tempo.
+        """)
+
+    df['color'] = df['accumulated_return'].apply(lambda x: 'green' if x >= df['accumulated_return'].mean() else 'red')
+
+    fig = px.line(
+        df,
+        x='date',
+        y='accumulated_return',
+        labels={
+            'date': 'Data',
+            'accumulated_return': 'Retorno Acumulado'
+        }
+    )
+
+    for i in range(len(df) - 1):
+        fig.add_scatter(
+            x=[df['date'][i], df['date'][i + 1]],
+            y=[df['accumulated_return'][i], df['accumulated_return'][i + 1]],
+            mode='lines',
+            line=dict(color=df['color'][i], width=2),
+            showlegend=False    
+        )
+
+    st.plotly_chart(fig, use_container_width=True)
+
 def bollinger(asset):
     df, bollinger_superior, bollinger_inferior = asset.get_outlier_bollinger_band_check()
     df = df.sort_values(by='date', ascending=True)
@@ -201,7 +276,7 @@ def run():
 
     pages = {
         'Histórico': history,
-        'Retorno Acumulado': None,
+        'Retorno Acumulado': accumulated_return,
         'Índice de Sharpe': sharpe_index,
         'Bollinger': bollinger
     }
