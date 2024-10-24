@@ -139,9 +139,6 @@ def bollinger(asset):
 
     st.plotly_chart(fig, use_container_width=True)
 
-    
-    
-
 def run():
     st.set_page_config('Precificação de ativos de renda variável', ':money_with_wings:')
 
