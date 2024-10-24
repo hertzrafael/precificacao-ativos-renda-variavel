@@ -70,7 +70,7 @@ def bollinger(asset):
 
     df = df.sort_values(by='date', ascending=True)
 
-    df['color'] = df['situation'].apply(lambda x: 'green' if x == 'Overvalued' else ('red' if x == 'Undervalued' else 'lightblue'))
+    df['color'] = df['situation'].apply(lambda x: 'green' if x == 'Overvalued' else ('red' if x == 'Undervalued' else 'yellow'))
 
     media = df['close'].mean()
 
@@ -88,6 +88,38 @@ def bollinger(asset):
 
     with quarter_col:
         st.metric('Desvio Padrão ', value=round(df['close'].std(), 2))
+        
+    with st.expander("🛈 Mais informações sobre o Desvio Padrão e Bandas de Bollinger", expanded=False):
+        st.markdown(r"""
+        **O que é o Desvio Padrão?**
+        
+        O desvio padrão é uma medida da dispersão dos valores em relação à média. 
+        A fórmula do desvio padrão é dada por:
+        $$\sigma = \sqrt{\frac{\sum (x_i - \mu)^2}{N}}$$
+        
+        onde:
+        - $$\sigma$$ é o desvio padrão
+        - $$x_i$$ são os valores do conjunto
+        - $$\mu$$ é a média dos valores
+        - $$N$$ é o número total de valores
+        
+        **Bandas de Bollinger**
+        
+        As Bandas de Bollinger são usadas para medir a volatilidade de um ativo e são compostas por três linhas:
+        
+        - Banda Superior:
+        $$\text{Banda Superior} = \mu + (k \cdot \sigma)$$
+        
+        - Banda Inferior:
+        $$\text{Banda Inferior} = \mu - (k \cdot \sigma)$$
+        
+        onde:
+        - $$\mu$$ é a média móvel 
+        - $$\sigma$$ é o desvio padrão dos preços 
+        - $$k$$ é o número de desvios padrão que você deseja 
+
+        As Bandas de Bollinger ajudam a identificar condições de sobrecompra ou sobrevenda.
+        """)
 
     fig = px.line(
         df,
@@ -100,11 +132,12 @@ def bollinger(asset):
     )
 
     for i in range(len(df) - 1):
-        fig.add_shape(
-            type="line",
-            x0=df['date'][i], x1=df['date'][i+1],
-            y0=df['close'][i], y1=df['close'][i+1],
-            line=dict(color=df['color'].iloc[i], width=2),
+        fig.add_scatter(
+            x=[df['date'][i], df['date'][i + 1]],
+            y=[df['close'][i], df['close'][i + 1]],
+            mode='lines',
+            line=dict(color=df['color'][i], width=2),
+            showlegend=False  
         )
 
     fig.add_shape(
