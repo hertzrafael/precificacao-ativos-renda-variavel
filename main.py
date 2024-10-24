@@ -52,17 +52,29 @@ def history(asset):
 
 def sharpe_index(asset):
     sharpe_history = asset.get_history(days=365)
-    sharpe = asset.get_sharpe_ratio()
+    acc_return, risk_free, monthly_return, sharpe = asset.get_sharpe_ratio()
 
-    initial_date = sharpe_history.head(1)['date'].values[0]
-    final_date = sharpe_history.tail(1)['date'].values[0]
+    initial_datetime = sharpe_history.head(1)['date'].values[0].astype('M8[ms]').astype('O')
+    final_datetime = sharpe_history.tail(1)['date'].values[0].astype('M8[ms]').astype('O')
 
-    # Mostrar o retorno mensal também.
+    initial_date = f'{initial_datetime.day}/{initial_datetime.month}/{initial_datetime.year}'
+    final_date = f'{final_datetime.day}/{final_datetime.month}/{final_datetime.year}'
 
     st.header(f'Período utilizado: {initial_date} - {final_date}')
-    st.metric('Taxa Livre de Risco: SELIC (%)', value=13.75)
+    st.divider()
 
-    st.metric('Indíce de Sharpe', value=sharpe)
+    first_col,_,third_col,_,fifth_col = st.columns(5)
+
+    with first_col:
+        st.metric('Taxa Livre de Risco', value=f'{round(risk_free * 100, 2)}%')
+
+    with third_col:
+        st.metric('Retorno Acumulado', value=f'{str(round(acc_return * 100, 2))}%')
+
+    with fifth_col:
+        st.metric('Indíce de Sharpe', value=sharpe)
+
+    st.dataframe(monthly_return.rename(columns={'date': 'month'}), hide_index=True, use_container_width=True)
 
 def bollinger(asset):
 
