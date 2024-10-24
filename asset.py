@@ -90,7 +90,7 @@ class Asset:
         risk_free_rate = 0.1375 
         sharpe_ratio = (accumulated_return - risk_free_rate) / std
 
-        return round(sharpe_ratio, 2)
+        return accumulated_return, risk_free_rate, monthly_return, round(sharpe_ratio, 2)
 
     def _transform_history(self, history):
         history.columns = history.columns.str.lower()
