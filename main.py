@@ -290,8 +290,10 @@ def run():
     st.title(f'{menu}: {asset_code}')
     asset = Asset(asset_code, days_before=days)
 
-    pages[menu](asset)
-
+    try:
+        pages[menu](asset)
+    except:
+        st.text("Houve algum erro. Cheque se inseriu corretamente o código da ação.")
 
 if __name__ == "__main__":
     run()
