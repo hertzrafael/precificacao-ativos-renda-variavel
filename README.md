@@ -1,5 +1,9 @@
 # **Planejamento de Projeto: Transformação, Limpeza e Análise Estatística de Ativos de Renda Variável**
 
+## **Link Streamlit**
+
+<a href="https://precificacao-ativos-renda-variavel.streamlit.app/">Clique aqui para acessar</a>
+
 ## **Introdução**
 
 Este projeto tem como foco as etapas de transformação e limpeza de dados, além da análise estatística de ativos de renda variável. Utilizaremos boas práticas de ciência de dados para garantir resultados confiáveis e claros, com exemplos de ativos como ações e fundos de investimento. A apresentação será feita em formato de slides.
