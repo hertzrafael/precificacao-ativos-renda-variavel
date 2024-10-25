@@ -1,0 +1,58 @@
+%% Copyright (c) 2013 Kazuki Maeda <kmaeda@users.sourceforge.jp>
+%%
+%% Distributable under the MIT License:
+%% http://www.opensource.org/licenses/mit-license.php
+%%
+\ProvidesPackage{beamerthemeDarkConsole}[2013/05/16 ]
+
+\mode<presentation>
+
+\RequirePackage{kmbeamer_common}
+
+\usecolortheme{DarkConsole}
+
+\def\familydefault{\ttdefault}
+
+\setbeamersize{text margin left=2mm,text margin right=2mm}
+
+\setbeamerfont{alerted text}{series=\bfseries}
+\setbeamerfont{structure}{series=\bfseries}
+\setbeamerfont{title}{size=\LARGE,series=\bfseries} % Título em tamanho maior
+\setbeamerfont{frametitle}{size=\LARGE,series=\bfseries} % Título do frame em tamanho maior
+\setbeamerfont{block title}{size=\large,series=\bfseries} % Título do bloco em tamanho maior
+\setbeamerfont{footline}{size*={5}{\z@},series=\bfseries}
+\setbeamerfont{author}{size=\LARGE, series=\bfseries}
+
+\setbeamertemplate{itemize item}{*}
+\setbeamertemplate{itemize subitem}{*}
+\setbeamertemplate{itemize subsubitem}{*}
+\setbeamertemplate{frametitle}{{\usebeamercolor[fg]{normal text}\texttt{\mdseries >>> }}\boldmath\insertframetitle}
+\setbeamertemplate{headline}{}
+\setbeamertemplate{footline}{
+  \setbox\kmbmr@tmpboxa\hbox{[\ifnum\insertsectionnumber>0\boldmath\insertsectionnumber.~\insertsection\else\char"7E\fi]\$~\_}
+  \setbox\kmbmr@tmpboxb\hbox{[\insertframenumber/\inserttotalframenumber]}
+  \ht\kmbmr@tmpboxa=1mm\dp\kmbmr@tmpboxa=0mm
+  \ht\kmbmr@tmpboxb=1mm\dp\kmbmr@tmpboxb=0mm
+  \vspace{5.2mm}
+  \hspace{2mm}\noindent\box\kmbmr@tmpboxa\hfill\box\kmbmr@tmpboxb\hspace{2mm}
+  \vspace{1.3mm}
+}
+\setbeamertemplate{title page}{
+  \renewcommand\thefootnote{\fnsymbol{footnote}}
+  \setcounter{footnote}{1} % \dagger
+  \noindent >>> {\usebeamerfont{title}\usebeamercolor[fg]{title}\bfseries\boldmath\inserttitle}
+  \ifx\insertsubtitle\@empty\else\\>>> {\usebeamerfont{title}\usebeamercolor[fg]{title}\insertsubtitle}\fi~\\[3em]
+  
+  \begin{center}
+    {\usebeamerfont{title}\usebeamercolor[whiteee]{title}\bfseries\LARGE Universidade Federal da Paraíba (UFPB) \\ Ciência de Dados para Negócios}
+  \end{center}
+  \\[2em]
+  
+  \begin{center} Alunos: \insertauthor\ \end{center}
+   \ifx\insertinstitute\@empty\else(\insertinstitute)\fi\\[1em]
+}
+
+\mode
+<all>
+
+\endinput
